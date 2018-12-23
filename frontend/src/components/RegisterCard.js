@@ -31,7 +31,8 @@ class RegisterCard extends Component{
         email:"",
         username:"",
         password:"",
-        change_password:""
+        change_password:"",
+        errorbox:"",
       }
     }
     changeHandler = (handler,event) =>{
@@ -72,9 +73,23 @@ class RegisterCard extends Component{
         
     }
     }
-
+    validatePassword =(password)=>{
+      const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+      return re.test(password)
+    }
+    validateEmail = (email) => {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+  }
     RegisterUser = (event) =>{
+
      event.preventDefault();
+      if(this.validateEmail(this.state.email)){
+        if(this.validatePassword(this.state.password))  {      
+          if(this.state.password === this.state.change_password){
+          this.setState({
+          errorbox:""
+        })
       
       this.props.addUser({
         variables:{
@@ -86,13 +101,49 @@ class RegisterCard extends Component{
         },
         refetchQueries:[{query:addUser}]
     });
-    }
+      }else{
+        const box = <div className="error-box">
 
-    render = () =>{
+    <p>Confirm Password is not match</p>
+    </div>
+   
+    this.setState({
+      errorbox:box
+    })
+      }
+      }else{
+        const box = <div className="error-box">
+
+        <p>Password must have</p>
+        <ul className="list">
+          <li>Minimum eight characters</li>
+          <li>At least one letter</li>
+          <li> one number</li>
+          <li>one special character</li>
+        </ul>
+        </div>
+   
+        this.setState({
+          errorbox:box
+        })
+      }
+  }else{
+    const box = <div className="error-box">
+    <p>Please Enter Valid Email Id</p>
+    </div>
+   
+    this.setState({
+      errorbox:box
+    })
+  }
+}
+
+render = () =>{
 
         const {classes} = this.props
         return(
             <form onSubmit={(event)=>this.RegisterUser(event)} className="login-layout__box--1">
+            {this.state.errorbox}
              <div className="util_center">
                 <TextField
                     id="outlined-fname-input"
@@ -104,7 +155,7 @@ class RegisterCard extends Component{
                     margin="normal"
                     variant="outlined"
                     onChange={(event)=>this.changeHandler("f_name",event)}
-
+                    required
                     />
                      <TextField
 
@@ -117,7 +168,7 @@ class RegisterCard extends Component{
                     margin="normal"
                     variant="outlined"
                     onChange={(event)=>this.changeHandler("l_name",event)}
-
+                    required
                     />
                     
                     </div>
@@ -132,7 +183,7 @@ class RegisterCard extends Component{
                     margin="normal"
                     variant="outlined"
                     onChange={(event)=>this.changeHandler("username",event)}
-
+                    required
                     />
                     <TextField
                     id="outlined-email-input"
@@ -144,7 +195,7 @@ class RegisterCard extends Component{
                     margin="normal"
                     variant="outlined"
                     onChange={(event)=>this.changeHandler("email",event)}
-
+                    required
                     />
                     </div>
                 
@@ -158,7 +209,7 @@ class RegisterCard extends Component{
                         margin="normal"
                         variant="outlined"
                     onChange={(event)=>this.changeHandler("password",event)}
-                        
+                    required
                         />
                         <TextField
                         id="outlined-password-input-2"
@@ -169,7 +220,7 @@ class RegisterCard extends Component{
                         margin="normal"
                         variant="outlined"
                     onChange={(event)=>this.changeHandler("change_password",event)}
-
+                    required
                         />
                     </div>
                     

@@ -133,7 +133,9 @@ display: flex;
   color: red;
   text-transform: capitalize;
 }
-
+.error-box .list{
+  text-align:left
+}
 .iconlink {
 display: flex;
 justify-content: center;
